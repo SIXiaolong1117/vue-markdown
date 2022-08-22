@@ -1,0 +1,163 @@
+/* 隐藏所有的滚动条 */
+/* .input::-webkit-scrollbar,
+.output::-webkit-scrollbar {
+  display: none;
+} */
+
+/* 代码块滚动条样式 */
+.input::-webkit-scrollbar,
+.output::-webkit-scrollbar,
+pre::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width: 7px;
+  /*高宽分别对应横竖滚动条的尺寸*/
+  height: 7px;
+}
+
+/*滚动条里面小方块*/
+.input::-webkit-scrollbar-thumb,
+.output::-webkit-scrollbar-thumb,
+pre::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  background: #ebebeb;
+}
+
+/*滚动条里面轨道*/
+.input::-webkit-scrollbar-track,
+.output::-webkit-scrollbar-track,
+pre::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: #fff;
+}
+
+body,
+html {
+  height: 100vh;
+  margin: 0;
+}
+
+p {
+  word-wrap: break-word;
+  word-break: normal;
+  margin: .5rem 0;
+  padding: 0;
+}
+
+#app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+nav {
+  height: 32px;
+  width: 100%;
+  top: 0;
+  position: fixed;
+  background-color: #292a2d;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+#input {
+  height: 100%;
+  width: auto;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(0, 0, 0);
+  overflow: hidden hidden;
+  margin-left: 12px;
+}
+
+.editor {
+  /* height: calc(100vh-31px); */
+  height: 100%;
+  width: 100%;
+  display: flex;
+  border-radius: 8px;
+}
+
+.input,
+.output {
+  overflow: auto;
+  width: 50%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 52px 20px 100px 20px;
+  /* border-radius: 8px; */
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.input {
+  border: none;
+  border-right: 1px solid #ccc;
+  background-color: #ffffff;
+  resize: none;
+  outline: none;
+  font-size: 14px;
+  font-family: 'Monaco', courier, monospace;
+  /* padding: 20px; */
+}
+
+.output {
+  background-color: #f0f0f4;
+}
+
+/* Markdown 样式设置 */
+
+iframe,
+img {
+  height: 10vh;
+  width: auto;
+  align-self: center;
+}
+
+pre,
+code {
+  width: 95%;
+  padding: 2px 8px;
+  flex-shrink: 0;
+  background-color: #ffffff;
+}
+
+pre {
+  margin: .5rem 2px;
+  overflow: auto;
+  border-radius: 0 8px 8px 0;
+  border-left: .25em solid rgb(115, 23, 214);
+}
+
+code {
+  margin: 0;
+  line-height: 1.45;
+  color: rgb(115, 23, 214);
+  border-radius: 4px;
+}
+
+pre code {
+  padding: 0;
+  margin: 0;
+}
+
+blockquote p {
+  margin: 0;
+}
+
+blockquote {
+  width: 95%;
+  padding: 2px 8px;
+  margin: .5rem 2px;
+  color: #57606a;
+  background-color: rgba(255, 255, 255, 0.423);
+  border-radius: 0 8px 8px 0;
+  border-left: .25em solid #57606a;
+  /* margin: 1rem 1rem 1rem 0; */
+  flex-shrink: 0;
+}
