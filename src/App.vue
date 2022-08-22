@@ -23,7 +23,32 @@ export default {
     // this.input = this.readFile('../README.md');
     // 将Vue方法传到全局对象 window 中，使 JS 可以调用
     window.openRealPath = this.openRealPath;
+    window.newFile = this.newFile;
     window.openFile = this.openFile;
+    window.InitEditor = this.InitEditor;
+    // 渲染进程接收主进程消息
+    const { ipcRenderer } = require("electron");
+    ipcRenderer.on("newFile", (event) => {
+      newFile();
+    });
+    ipcRenderer.on("openFile", (event) => {
+      openFile();
+    });
+    ipcRenderer.on("openFilePath", (event, data) => {
+      console.log(data);
+      // 清理的原因是防止监听函数失效
+      // 清空文件地址
+      document.getElementById('input').value = null;
+      // 清空 open 元素，否则打开文件的监听无法正常运行
+      document.getElementById('open').value = null;
+      console.log("input: ", this.input);
+      // 根据路径打开文件
+      this.input = this.readFile(data);
+      console.log("文件地址：", data);
+    })
+    ipcRenderer.on("InitEditor", (event) => {
+      InitEditor();
+    });
   },
   methods: {
     // 更新方法，每次 input 变动都会引起 output 的更新。
@@ -127,24 +152,24 @@ export default {
 </script>
 
 <template>
-  <nav>
-    <!-- 新建文件按钮 -->
+  <!-- <nav>
+    新建文件按钮
     <el-button id="new_button" type="primary" v-on:click="newFile()" round>新建文件</el-button>
-    <!-- 打开文件按钮 -->
+    打开文件按钮
     <el-button id="input_button" type="primary" v-on:click="openFile()" round>打开文件</el-button>
-    <!-- 保存文件按钮 -->
+    保存文件按钮
     <el-button id="save_button" type="primary" v-on:click="saveFile()" round>保存文件</el-button>
-    <!-- 另存文件按钮 -->
+    另存文件按钮
     <el-button id="save_as_button" type="primary" v-on:click="saveAsFile()" round>另存文件</el-button>
-    <!-- 刷新按钮（测试用） -->
+    刷新按钮（测试用）
     <el-button id="save_button" type="primary" v-on:click="InitEditor()" round>重置页面（调试用）</el-button>
-    <!-- input textatra 暂存信息 -->
-    <el-input id="input" type="textarea" :autosize="{ minRows: 1, maxRows: 1 }" placeholder="文件目录" v-model="textarea"
-      style="display:none">
-    </el-input>
-    <!-- 这里的 accept=".md" 可以确保上传文件为 Markdown 文件 -->
-    <input id="open" type="file" accept=".md" name="filename" style="display:none" />
-  </nav>
+  </nav> -->
+  <!-- input textatra 暂存信息 -->
+  <el-input id="input" type="textarea" :autosize="{ minRows: 1, maxRows: 1 }" placeholder="文件目录" v-model="textarea"
+    style="display:none">
+  </el-input>
+  <!-- 这里的 accept=".md" 可以确保上传文件为 Markdown 文件 -->
+  <input id="open" type="file" accept=".md" name="filename" style="display:none" />
   <!-- Editor 主体，包含 input 和 output -->
   <div class="editor">
     <!-- 通过ref属性来操控两个div的scrollTop属性，结合 JS 来实现同步滚动 -->

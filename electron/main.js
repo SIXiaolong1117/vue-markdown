@@ -1,5 +1,5 @@
 // 控制应用生命周期和创建原生浏览器窗口的模组
-const { app, BrowserWindow } = require('electron')
+const { app, shell, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 
 const NODE_ENV = process.env.NODE_ENV
@@ -12,9 +12,14 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       // 关闭网站安全检查
-      webSecurity: false
+      webSecurity: false,
+      // 开启node
+      nodeIntegration: true,
+      contextIsolation: false,
+      // 开启remote
+      enableRemoteModule: true,
     }
-  })
+  });
 
   // 加载 index.html
   // mainWindow.loadFile('dist/index.html') 将该行改为下面这一行，加载url
@@ -27,7 +32,78 @@ function createWindow() {
   // 打开开发工具
   if (NODE_ENV === "development") {
     mainWindow.webContents.openDevTools()
-  }
+  };
+
+  // 引入自定义菜单
+  // require("../ipcMain/menu.js");
+  var menuTemplate = [
+    {
+      label: "文件",
+      submenu: [
+        // accelerator 配置快捷键
+        {
+          label: '新建', accelerator: "ctrl+n", click: () => {
+            console.log("新建文件");
+            mainWindow.webContents.send("newFile");
+          }
+        },
+        {
+          label: '打开', accelerator: "ctrl+o", click: () => {
+            console.log("打开文件");
+            // mainWindow.webContents.send("openFile");
+            // then 等待选择完成
+            const { dialog } = require('electron')
+            dialog.showOpenDialog({
+              properties: ['openFile'],
+                filters: [
+                  { name: 'Markdown Files', extensions: ['md'] },
+                ]
+            }).then((data) => {
+                console.log(data.filePaths.toString());
+                mainWindow.webContents.send("openFilePath", data.filePaths.toString());
+              });
+          // console.log(dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] }))
+        }
+        },
+    { type: "separator" },
+    { label: '保存', accelerator: "ctrl+s", click: () => { console.log("保存文件") } },
+    { label: '另存为…', accelerator: "ctrl+alt+s", click: () => { console.log("另存文件") } },
+  ]
+},
+{
+  label: "编辑",
+    submenu: [
+      // role按角色进行配置
+      { label: "复制", role: "copy", click: () => { console.log("复制文件") } },
+      { label: "粘贴", role: "paste", click: () => { console.log("粘贴文件") } }
+    ]
+},
+{
+  label: "帮助",
+    submenu: [
+      {
+        label: "作者…", click: () => {
+          console.log("作者页面");
+          shell.openExternal('https://github.com/Direct5dom');
+        }
+      },
+    ]
+},
+{
+  label: "调试（开发者模式）",
+    submenu: [
+      {
+        label: "重置页面", click: () => {
+          console.log("重置页面");
+          mainWindow.webContents.send("InitEditor");
+        }
+      },
+    ]
+},
+  ];
+// 固定写法
+var menuBuilder = Menu.buildFromTemplate(menuTemplate);
+Menu.setApplicationMenu(menuBuilder);
 
 }
 
@@ -37,9 +113,19 @@ function createWindow() {
 app.whenReady().then(() => {
   createWindow()
 
-  // 隐藏菜单栏
-  const { Menu } = require('electron');
-  Menu.setApplicationMenu(null);
+  // // 隐藏菜单栏
+  // const { Menu } = require('electron');
+  // Menu.setApplicationMenu(null);
+
+  // // 打开文件 diglog
+  // const { dialog } = require('electron');
+  // console.log(dialog.showOpenDialog({ properties: ['openFile'] }));
+
+  // const { ipcMain } = require("electron");
+
+  // ipcMain.on("sendMessage", (event) => {
+  //   event.sender.send("sendMain", "this is a main")
+  // })
 
   app.on('activate', function () {
     // 通常在 macOS 上，当点击 dock 中的应用程序图标时，如果没有其他
