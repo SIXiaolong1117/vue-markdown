@@ -102,8 +102,45 @@ function createWindow() {
       label: "编辑",
       submenu: [
         // role按角色进行配置
-        { label: "复制", role: "copy", click: () => { console.log("复制文件") } },
-        { label: "粘贴", role: "paste", click: () => { console.log("粘贴文件") } }
+        { label: "撤销", role: "undo", click: () => { console.log("撤销操作") } },
+        { label: "重做", role: "redo", click: () => { console.log("重做操作") } },
+        {
+          type: "separator"
+        },
+        { label: "剪切", role: "cut", click: () => { console.log("剪切操作") } },
+        { label: "复制", role: "copy", click: () => { console.log("复制操作") } },
+        { label: "粘贴", role: "paste", click: () => { console.log("粘贴操作") } },
+        {
+          type: "separator"
+        },
+        { label: "全选", role: "selectall", click: () => { console.log("全选操作") } },
+
+      ]
+    },
+    {
+      label: "视图",
+      submenu: [
+        {
+          label: "全屏", accelerator: "f11", click: () => {
+            console.log("全屏");
+            mainWindow.setFullScreen(!mainWindow.isFullScreen());
+          },
+        },
+        {
+          type: "separator"
+        },
+        {
+          label: "重置页面", click: () => {
+            console.log("重置页面");
+            mainWindow.webContents.reload()
+          },
+        },
+        {
+          label: "开发者工具", accelerator: "shift+f12", click: () => {
+            console.log("开发者工具");
+            mainWindow.toggleDevTools();
+          }
+        },
       ]
     },
     {
@@ -115,15 +152,10 @@ function createWindow() {
             shell.openExternal('https://github.com/Direct5dom');
           }
         },
-      ]
-    },
-    {
-      label: "调试（开发者模式）",
-      submenu: [
         {
-          label: "重置页面", click: () => {
-            console.log("重置页面");
-            mainWindow.webContents.reload()
+          label: "许可证…", click: () => {
+            console.log("许可证");
+            shell.openExternal('https://github.com/Direct5dom/vue-markdown/LICENSE');
           }
         },
       ]
@@ -132,9 +164,6 @@ function createWindow() {
   // 固定写法
   var menuBuilder = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menuBuilder);
-
-
-
 }
 
 // 这段程序将会在 Electron 结束初始化
