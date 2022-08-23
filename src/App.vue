@@ -7,6 +7,7 @@ const fs = require("fs")
 export default {
   data() {
     return {
+      // 同步滚动切换左右的 flag
       flag: false
     }
   },
@@ -21,15 +22,15 @@ export default {
     }
   },
   mounted() {
-    // // 使用 this.readFile 读取指定目录的文件，并替换 input
-    // this.input = this.readFile('../README.md');
-    // 将Vue方法传到全局对象 window 中，使 JS 可以调用
+    // 将Vue方法传到全局对象 window 中，使其全局可以调用
     window.openRealPath = this.openRealPath;
     window.newFile = this.newFile;
-    window.openFile = this.openFile;
+    // window.openFile = this.openFile;
     window.InitEditor = this.InitEditor;
+
     // 渲染进程接收主进程消息
     const { ipcRenderer } = require("electron");
+
     // 需要路径的监听
     ipcRenderer.on("needFilePath", (event, data) => {
       console.log("传入的data：", data);
@@ -48,12 +49,15 @@ export default {
           console.log("写入成功");
       })
     })
+    // 新建文件
     ipcRenderer.on("newFile", (event) => {
       newFile();
     });
-    ipcRenderer.on("openFile", (event) => {
-      openFile();
-    });
+    // // 调用 Vue 打开文件
+    // ipcRenderer.on("openFile", (event) => {
+    //   openFile();
+    // });
+    // 使用 Electron 打开文件
     ipcRenderer.on("openFilePath", (event, data) => {
       console.log(data);
       // 清理的原因是防止监听函数失效
@@ -68,6 +72,7 @@ export default {
       this.input = this.readFile(data);
       console.log("文件地址：", data);
     });
+    // 保存文件
     ipcRenderer.on("saveFile", (event) => {
       // 获取textarea文本内容
       let textMarkdown = document.getElementsByClassName('input')[0].value;
@@ -91,6 +96,7 @@ export default {
             console.log("写入成功");
         })
     });
+    // 另存文件
     ipcRenderer.on("saveAsFile", (event) => {
       // 获取textarea文本内容
       let textMarkdown = document.getElementsByClassName('input')[0].value;
@@ -116,7 +122,7 @@ export default {
     }, 100),
     // readFile，解析 md 文件内容
     readFile(filePath) {
-      // 创建一个新的xhr对象
+      // 创建一个新的 xhr 对象
       let xhr = null, okStatus = document.location.protocol === 'file' ? 0 : 200
       xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP')
       xhr.open('GET', filePath, false)
@@ -135,22 +141,22 @@ export default {
       this.input = '';
       console.log("文件地址：", document.getElementById('input').value);
     },
-    // openFile，打开文件
-    openFile: function () {
-      // 清理的原因是防止监听函数失效
-      // 清空文件地址
-      document.getElementById('input').value = null;
-      // 清空 open 元素，否则打开文件的监听无法正常运行
-      document.getElementById('open').value = null;
-      console.log("input: ", this.input);
-      // 创建一个 open 变量，用于存储"open"的元素
-      var open = document.getElementById("open");
-      // 点击事件，打开选择文件窗口
-      document.getElementById('open').click();
-      // 监听元素变动，一旦有变动便运行 openRealPath
-      open.addEventListener('change', openRealPath);
-      console.log("执行操作：打开文件")
-    },
+    // // openFile，打开文件
+    // openFile: function () {
+    //   // 清理的原因是防止监听函数失效
+    //   // 清空文件地址
+    //   document.getElementById('input').value = null;
+    //   // 清空 open 元素，否则打开文件的监听无法正常运行
+    //   document.getElementById('open').value = null;
+    //   console.log("input: ", this.input);
+    //   // 创建一个 open 变量，用于存储"open"的元素
+    //   var open = document.getElementById("open");
+    //   // 点击事件，打开选择文件窗口
+    //   document.getElementById('open').click();
+    //   // 监听元素变动，一旦有变动便运行 openRealPath
+    //   open.addEventListener('change', openRealPath);
+    //   console.log("执行操作：打开文件")
+    // },
     // openRealPath，打开真实地址的文件
     openRealPath: function () {
       // 储存文件地址
@@ -158,13 +164,6 @@ export default {
       // 用 readFile 读取新目录下的 md 文件，然后替换 input 的内容
       this.input = this.readFile(document.getElementById('open').files[0].path);
       console.log("文件地址：", document.getElementById('open').files[0].path);
-    },
-    saveAsFile: function () {
-      console.log("执行操作：另存文件")
-    },
-    // 刷新页面
-    InitEditor: function () {
-      location.reload()
     },
     // 左右滚动条滚动同步
     changeFlag(flag) {
@@ -180,11 +179,6 @@ export default {
       if (!this.flag) {
         // 按百分比计算右侧移动
         this.$refs.rightCont.scrollTop = (this.$refs.leftCont.scrollTop * proportionH);
-        // console.log('L位置: ', this.$refs.leftCont.scrollTop);
-        // console.log('L高度: ', lHeight);
-        // console.log('R位置: ', this.$refs.rightCont.scrollTop);
-        // console.log('R高度: ', rHeight);
-        // console.log('R百分比: ', this.$refs.rightCont.scrollTop / rHeight);
       }
     },
     rightHandleScroll() {
@@ -196,11 +190,6 @@ export default {
       if (this.flag) {
         // 按百分比计算左侧移动
         this.$refs.leftCont.scrollTop = (this.$refs.rightCont.scrollTop / proportionH);
-        // console.log('R位置: ', this.$refs.rightCont.scrollTop);
-        // console.log('R高度: ', rHeight);
-        // console.log('L位置: ', this.$refs.leftCont.scrollTop);
-        // console.log('L高度: ', lHeight);
-        // console.log('L百分比: ', this.$refs.leftCont.scrollTop / lHeight);
       }
     }
   },
@@ -208,18 +197,6 @@ export default {
 </script>
 
 <template>
-  <!-- <nav>
-    新建文件按钮
-    <el-button id="new_button" type="primary" v-on:click="newFile()" round>新建文件</el-button>
-    打开文件按钮
-    <el-button id="input_button" type="primary" v-on:click="openFile()" round>打开文件</el-button>
-    保存文件按钮
-    <el-button id="save_button" type="primary" v-on:click="saveFile()" round>保存文件</el-button>
-    另存文件按钮
-    <el-button id="save_as_button" type="primary" v-on:click="saveAsFile()" round>另存文件</el-button>
-    刷新按钮（测试用）
-    <el-button id="save_button" type="primary" v-on:click="InitEditor()" round>重置页面（调试用）</el-button>
-  </nav> -->
   <!-- input textatra 暂存信息 -->
   <el-input id="input" type="textarea" :autosize="{ minRows: 1, maxRows: 1 }" placeholder="文件目录" v-model="textarea"
     style="display:none">

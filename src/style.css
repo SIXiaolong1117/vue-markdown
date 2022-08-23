@@ -37,9 +37,16 @@ html {
   margin: 0;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 p {
+  width: 100%;
   word-wrap: break-word;
-  word-break: normal;
+  word-break: break-all;
   margin: .5rem 0;
   padding: 0;
 }
@@ -96,6 +103,8 @@ nav {
 }
 
 .input {
+  word-wrap: break-word;
+  word-break: break-all;
   border: none;
   border-right: 1px solid #ccc;
   background-color: #ffffff;

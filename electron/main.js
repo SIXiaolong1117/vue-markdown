@@ -161,8 +161,9 @@ function createWindow() {
       ]
     },
   ];
-  // 固定写法
+  // 构建菜单模板
   var menuBuilder = Menu.buildFromTemplate(menuTemplate);
+  // 设置菜单模板为当前应用的菜单
   Menu.setApplicationMenu(menuBuilder);
 }
 
