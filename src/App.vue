@@ -2,6 +2,8 @@
 import { marked } from 'marked'
 import { debounce } from 'lodash-es'
 
+const fs = require("fs")
+
 export default {
   data() {
     return {
@@ -28,6 +30,24 @@ export default {
     window.InitEditor = this.InitEditor;
     // 渲染进程接收主进程消息
     const { ipcRenderer } = require("electron");
+    // 需要路径的监听
+    ipcRenderer.on("needFilePath", (event, data) => {
+      console.log("传入的data：", data);
+      // 将文件地址存储于 input 元素
+      document.getElementById('input').value = data;
+      console.log("路径确定: ", document.getElementById('input').value);
+      // 直接写入文件
+      // 获取textarea文本内容
+      let textMarkdown = document.getElementsByClassName('input')[0].value;
+      // 获取当前打开文件地址
+      let markdownPath = document.getElementById('input').value;
+      console.log(textMarkdown);
+      fs.writeFile(markdownPath, textMarkdown, error => {
+        if (error) return console.log("写入文件失败，原因是" + error.message);
+        else
+          console.log("写入成功");
+      })
+    })
     ipcRenderer.on("newFile", (event) => {
       newFile();
     });
@@ -41,11 +61,50 @@ export default {
       document.getElementById('input').value = null;
       // 清空 open 元素，否则打开文件的监听无法正常运行
       document.getElementById('open').value = null;
-      console.log("input: ", this.input);
+      // 将文件地址存储于 input 元素
+      document.getElementById('input').value = data;
+      console.log("路径确定: ", document.getElementById('input').value);
       // 根据路径打开文件
       this.input = this.readFile(data);
       console.log("文件地址：", data);
-    })
+    });
+    ipcRenderer.on("saveFile", (event) => {
+      // 获取textarea文本内容
+      let textMarkdown = document.getElementsByClassName('input')[0].value;
+      // 获取当前打开文件地址
+      let markdownPath = document.getElementById('input').value;
+      console.log(textMarkdown);
+      // 写入本地文件
+      // 无路径的情况
+      if (markdownPath == '') {
+        console.log('目录为空，需要确定目录')
+        // 向主进程发送请求
+        const { ipcRenderer } = require("electron");
+        ipcRenderer.send("needFilePath");
+      }
+      // 有路径的情况
+      else
+        // 直接写入文件
+        fs.writeFile(markdownPath, textMarkdown, error => {
+          if (error) return console.log("写入文件失败，原因是" + error.message);
+          else
+            console.log("写入成功");
+        })
+    });
+    ipcRenderer.on("saveAsFile", (event) => {
+      // 获取textarea文本内容
+      let textMarkdown = document.getElementsByClassName('input')[0].value;
+      // 获取当前打开文件地址
+      let markdownPath = document.getElementById('input').value;
+      console.log(textMarkdown);
+      // 写入本地文件
+      // 无路径的情况
+      console.log('另存文件，需要确定目录')
+      // 向主进程发送请求
+      const { ipcRenderer } = require("electron");
+      ipcRenderer.send("needFilePath");
+
+    });
     ipcRenderer.on("InitEditor", (event) => {
       InitEditor();
     });
@@ -99,9 +158,6 @@ export default {
       // 用 readFile 读取新目录下的 md 文件，然后替换 input 的内容
       this.input = this.readFile(document.getElementById('open').files[0].path);
       console.log("文件地址：", document.getElementById('open').files[0].path);
-    },
-    saveFile: function () {
-      console.log("执行操作：保存文件")
     },
     saveAsFile: function () {
       console.log("执行操作：另存文件")
