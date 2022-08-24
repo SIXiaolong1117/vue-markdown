@@ -19,7 +19,7 @@ pre::-webkit-scrollbar {
 .output::-webkit-scrollbar-thumb,
 pre::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
   background: #ebebeb;
 }
 

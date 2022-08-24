@@ -1,2 +1,4 @@
 node_modules
 testFile
+dist
+dist_electron
