@@ -1,6 +1,6 @@
 {
   "name": "vue-markdown",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "electron/main.js",
   "author": "SI-Xiaolong",
   "license": "MIT License",

@@ -155,7 +155,7 @@ function createWindow() {
         {
           label: "许可证…", click: () => {
             console.log("许可证");
-            shell.openExternal('https://github.com/Direct5dom/vue-markdown/LICENSE');
+            shell.openExternal('https://raw.githubusercontent.com/Direct5dom/vue-markdown/main/LICENSE');
           }
         },
       ]
@@ -176,8 +176,6 @@ app.whenReady().then(() => {
   // // 隐藏菜单栏
   // const { Menu } = require('electron');
   // Menu.setApplicationMenu(null);
-
-
 
   app.on('activate', function () {
     // 通常在 macOS 上，当点击 dock 中的应用程序图标时，如果没有其他
