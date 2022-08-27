@@ -63,6 +63,32 @@ function createWindow() {
           }
         },
         {
+          label: '新建窗口', accelerator: "ctrl+shift+n", click: () => {
+            console.log("新建窗口");
+            newwin = new BrowserWindow({
+              width: 900,
+              height: 800,
+              webPreferences: {
+                preload: path.join(__dirname, 'preload.js'),
+                // 关闭网站安全检查
+                webSecurity: false,
+                // 开启node
+                nodeIntegration: true,
+                contextIsolation: false,
+                // 开启remote
+                enableRemoteModule: true,
+              },
+              parent: mainWindow, //win是主窗口
+            })
+            newwin.loadURL(
+              NODE_ENV === 'development'
+                ? 'http://localhost:3000'
+                : `file://${path.join(__dirname, '../dist/index.html')}`
+            ); //new.html是新开窗口的渲染进程
+            newwin.on('closed', () => { newwin = null })
+          }
+        },
+        {
           label: '打开', accelerator: "ctrl+o", click: () => {
             console.log("打开文件");
             // // 调用Vue里面的openFile
