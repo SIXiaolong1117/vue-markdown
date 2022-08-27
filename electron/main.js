@@ -1,7 +1,9 @@
+// main.js：Electron的主进程
 // 控制应用生命周期和创建原生浏览器窗口的模组
 const { app, shell, BrowserWindow, Menu } = require('electron')
+// 处理路径信息的path
 const path = require('path')
-
+// Node开发者模式
 const NODE_ENV = process.env.NODE_ENV
 
 function createWindow() {
@@ -9,12 +11,15 @@ function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 800,
+    // 渲染首选项
     webPreferences: {
+      // 预加载
       preload: path.join(__dirname, 'preload.js'),
       // 关闭网站安全检查
       webSecurity: false,
       // 开启node
       nodeIntegration: true,
+      // 关闭上下文隔离 
       contextIsolation: false,
       // 开启remote
       enableRemoteModule: true,
@@ -30,8 +35,10 @@ function createWindow() {
     dialog.showOpenDialog({
       properties: ['openDirectory'],
     }).then((data) => {
+      // 选择目录后，默认创建“新建VueMarkdown.md”
       filePath = data.filePaths.toString() + '\\新建VueMarkdown.md';
       console.log(filePath);
+      // 向主进程发送needFilePath完成后续功能
       mainWindow.webContents.send("needFilePath", filePath);
     });
   })
@@ -122,6 +129,15 @@ function createWindow() {
             mainWindow.webContents.send("saveAsFile");
           }
         },
+        {
+          type: "separator"
+        },
+        {
+          label: '关闭', accelerator: "ctrl+w", click: () => {
+            console.log("关闭");
+            mainWindow.close();
+          }
+        },
       ]
     },
     {
@@ -140,7 +156,10 @@ function createWindow() {
           type: "separator"
         },
         { label: "全选", role: "selectall", click: () => { console.log("全选操作") } },
-
+        {
+          type: "separator"
+        },
+        { label: "删除", role: "delete", click: () => { console.log("删除操作") } },
       ]
     },
     {
