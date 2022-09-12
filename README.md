@@ -8,7 +8,7 @@
 
 ## ⬇下载
 
-您可以直接到[Releases · Direct5dom/vue-markdown](https://github.com/Direct5dom/vue-markdown/releases)下载已经打包好的软件。
+您可以直接到 [Releases · Direct5dom/vue-markdown](https://github.com/Direct5dom/vue-markdown/releases) 下载已经打包好的软件。
 
 ## 🛠️构建
 
@@ -18,11 +18,10 @@
 git clone https://github.com/Direct5dom/vue-markdown
 cd vue-markdown
 yarn
-# 您可能还需要
-## 安装electron至vite应用
+## 安装electron
 yarn add --dev electron
-## 安装concurrently和wait-on
-yarn add -D concurrently wait-on
+## 安装marked、lodash-es、concurrently和wait-on
+yarn add -D concurrently wait-on marked lodash-es
 ```
 
 运行
@@ -45,6 +44,8 @@ yarn add -D cross-env electron-builder
 ```sh
 yarn electron:build
 ```
+
+打包的结果可以在 `/dist_electron` 中找到。
 
 ## ⚖️License
 
